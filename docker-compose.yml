@@ -43,3 +43,14 @@ services:
       - 65535:65535/udp # RTP
       - 20000-20100:20000-20100/tcp # WebRTC PeerConnection
       - 20000-20100:20000-20100/udp # WebRTC PeerConnection UDP
+
+  lightspeed-wrapper:
+    container_name: lightspeed-wrapper
+    image: lightspeed-wrapper
+    build:
+      context: ./wrapper
+      dockerfile: Dockerfile
+    env_file : '.env'
+    restart: on-failure
+    ports:
+      - 80:80
