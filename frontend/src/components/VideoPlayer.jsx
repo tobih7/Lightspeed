@@ -18,9 +18,9 @@ const VideoPlayer = ({ src }) => {
       ref={videoRef}
       playsInline
       autoPlay
-      controls
-      muted
-      poster={VideoPosterURL}
+      // controls
+      // muted
+      // poster={VideoPosterURL}
     ></Video>
   );
 };
