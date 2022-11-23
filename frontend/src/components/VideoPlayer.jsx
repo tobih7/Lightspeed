@@ -10,6 +10,13 @@ const VideoPlayer = ({ src }) => {
     if (src) {
       videoRef.current.srcObject = src;
       videoRef.current.play();
+
+      // // when video is muted autoplay works without interacting first, otherwise this is required
+      // function play() {
+      //   videoRef.current.play();
+      //   setTimeout(play, 1000);
+      // }
+      // play();
     }
   }, [src]);
 
@@ -19,7 +26,7 @@ const VideoPlayer = ({ src }) => {
       playsInline
       autoPlay
       // controls
-      // muted
+      muted
       // poster={VideoPosterURL}
     ></Video>
   );
