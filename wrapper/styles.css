@@ -14,7 +14,7 @@ body > iframe {
     right: 0;
     width: calc(100% - var(--border-size) * 2);
     height: calc(100% - var(--border-size) * 2);
-    border: var(--border-size) solid #A00;
+    border: var(--border-size) solid #000;
     margin: 0;
     padding: 0;
     overflow: hidden;
