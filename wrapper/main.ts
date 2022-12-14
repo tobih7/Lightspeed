@@ -25,7 +25,7 @@ function updateColor() {
     IFRAME.style.borderColor = COLORS.red;
 }
 
-function setColor() {}
+function setColor() { }
 
 function showStream() {
     IFRAME = document.createElement("iframe");

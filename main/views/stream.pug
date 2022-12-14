@@ -1,0 +1,14 @@
+html
+
+  head
+    title Lightspeed
+    style
+      include styles.css
+
+  body
+    iframe(src=streamURL onload="update(); this.style.display = 'inline'")
+
+    button(onclick="console.log('lol')") lol
+
+    script
+      include stream.js
