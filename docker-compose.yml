@@ -5,10 +5,10 @@ services:
     container_name: lightspeed-ingest
     image: projectlightspeed/ingest
     #Uncomment below to build locally
-#    image: lightspeed-ingest
-#    build:
-#      context: ./ingest
-#      dockerfile: Dockerfile
+    #    image: lightspeed-ingest
+    #    build:
+    #      context: ./ingest
+    #      dockerfile: Dockerfile
     env_file: '.env'
     restart: on-failure
     ports:
@@ -31,12 +31,19 @@ services:
     container_name: lightspeed-webrtc
     image: projectlightspeed/webrtc
     #Uncomment below to build locally
-#    image: lightspeed-webrtc
-#    build:
-#      context: ./webrtc
-#      dockerfile: Dockerfile
+    #image: lightspeed-webrtc
+    #build:
+    #  context: ./webrtc
+    #  dockerfile: Dockerfile
     env_file: '.env'
-    command: ["lightspeed-webrtc", "--addr=0.0.0.0", "--ip=${WEBSOCKET_HOST}", "--ports=20000-20100", "run"]
+    command:
+      [
+        "lightspeed-webrtc",
+        "--addr=0.0.0.0",
+        "--ip=${WEB_HOST}",
+        "--ports=20000-20100",
+        "run"
+      ]
     restart: on-failure
     ports:
       - ${WEBSOCKET_PORT}:8080 # WebRTC
@@ -44,13 +51,13 @@ services:
       - 20000-20100:20000-20100/tcp # WebRTC PeerConnection
       - 20000-20100:20000-20100/udp # WebRTC PeerConnection UDP
 
-  lightspeed-wrapper:
-    container_name: lightspeed-wrapper
-    image: lightspeed-wrapper
+  lightspeed-main:
+    container_name: lightspeed-main
+    image: lightspeed-main
     build:
-      context: ./wrapper
+      context: ./main
       dockerfile: Dockerfile
-    env_file : '.env'
+    env_file: '.env'
     restart: on-failure
     ports:
-      - 80:80
+      - 80:8080/tcp

@@ -6,9 +6,6 @@ html
       include styles.css
 
   body
-    iframe(src=streamURL onload="update(); this.style.display = 'inline'")
-
-    button(onclick="console.log('lol')") lol
-
+    iframe(src=streamURL onload="startUpdate()")
     script
       include stream.js

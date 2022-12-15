@@ -42,7 +42,6 @@ const App = () => {
   pc.onicecandidate = (e) => {
     const { candidate } = e;
     if (candidate) {
-      console.log("Candidate success");
       socket.send(
         JSON.stringify({
           event: "candidate",
@@ -70,7 +69,6 @@ const App = () => {
 
       switch (msg.event) {
         case "offer":
-          console.log("Offer");
           pc.setRemoteDescription(offerCandidate);
 
           try {
@@ -88,7 +86,6 @@ const App = () => {
 
           return;
         case "candidate":
-          console.log("Candidate");
           pc.addIceCandidate(offerCandidate);
           return;
         case "info":

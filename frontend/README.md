@@ -60,16 +60,16 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-This is one of three components required for Project Lightspeed. Project Lightspeed is a fully self contained live streaming server. With this you will be able to deploy your own sub-second latency live streaming platform. This particular repository connects via websocket to Lightspeed WebRTC and displays a WebRTC stream. In order for this to work the Project Lightspeed WebRTC and Project Lightspeed Ingest are required. 
+This is one of three components required for Project Lightspeed. Project Lightspeed is a fully self contained live streaming server. With this you will be able to deploy your own sub-second latency live streaming platform. This particular repository connects via websocket to Lightspeed WebRTC and displays a WebRTC stream. In order for this to work the Project Lightspeed WebRTC and Project Lightspeed Ingest are required.
 
 ### Built With
 
-- React
+-   React
 
 ### Dependencies
 
-- [Lightspeed WebRTC](https://github.com/GRVYDEV/Lightspeed-webrtc)
-- [Lightspeed Ingest](https://github.com/GRVYDEV/Lightspeed-ingest)
+-   [Lightspeed WebRTC](https://github.com/GRVYDEV/Lightspeed-webrtc)
+-   [Lightspeed Ingest](https://github.com/GRVYDEV/Lightspeed-ingest)
 
 <!-- GETTING STARTED -->
 
@@ -91,7 +91,7 @@ This is one of three components required for Project Lightspeed. Project Lightsp
     ```sh
     docker run -it --rm \
       -p 8000:80/tcp \
-      -e WEBSOCKET_HOST=localhost \
+      -e WEB_HOST=localhost \
       -e WEBSOCKET_PORT=8080 \
       grvydev/lightspeed-react
     ```
@@ -175,10 +175,7 @@ Project Link: [https://github.com/GRVYDEV/Lightspeed-react](https://github.com/G
 
 ## Acknowledgements
 
-- [Sean Dubois](https://github.com/Sean-Der)
-
+-   [Sean Dubois](https://github.com/Sean-Der)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-
-

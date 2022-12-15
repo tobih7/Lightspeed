@@ -2,10 +2,10 @@ import express from "express";
 import path from "path";
 
 import apiRouter from "./api";
+import { isIDValid } from "./state";
 
 const streamURL = (process.env.WEB_HOST && process.env.WEB_PORT)
-    ? `http://${process.env.WEB_HOST}:${process.env.WEB_PORT}`
-    : "/";
+    ? `http://${process.env.WEB_HOST}:${process.env.WEB_PORT}` : "/";
 
 const app = express();
 app.set('view engine', 'pug')
@@ -19,14 +19,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:id", (req, res) => {
-    // check if id is valid, if not redirect to /
-    const id = parseInt(req.params.id);
-    if (isNaN(id) || id < 1 || id > 3) {
-        res.redirect("/");
-        return;
-    }
+    // if id is invalid redirect to /
+    if (!isIDValid(parseInt(req.params.id))) return res.redirect("/");
 
     res.render("stream", { streamURL });
 });
 
-app.listen(8080); // ?callback
+app.listen(8090); // ?callback
