@@ -17,7 +17,8 @@
             "rules": {
                 "max-len": "off",
                 "@typescript-eslint/no-empty-function": "off",
-                "jsdoc/newline-after-description": "off"
+                "jsdoc/newline-after-description": "off",
+                "semi": "error"
             }
         }
     ]
