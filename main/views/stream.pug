@@ -6,6 +6,6 @@ html
       include styles.css
 
   body
-    iframe(src=streamURL onload="startUpdate()")
+    iframe(src=streamURL onload="updateLoop()")
     script
       include stream.js

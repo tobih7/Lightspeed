@@ -1,22 +1,11 @@
+// =====  Lightspeed  ===== \\
+
 const iframe = document.querySelector("body iframe");
-const id = document.location.pathname.slice(1);
+const pageid = document.location.pathname.slice(1);
 
-// UUID to identify this session
-UUID = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+let UUID = localStorage.getItem("UUID");
 
-async function startUpdate() {
-    // initially get the servers state and then watch for changes
-    // called on load of stream iframe
-    await updateState(false);
-    iframe.style.display = 'inline'; // unhide the stream
-    updateLoop();
-}
-
-async function updateLoop() {
-    try { await updateState(); }
-    catch { await new Promise(r => setTimeout(r, 1000)); } // wait before retrying
-    updateLoop();
-}
+const abortcontroller = new AbortController();
 
 async function updateState() {
     const res = await fetch("/update", {
@@ -24,13 +13,39 @@ async function updateState() {
         cache: "no-cache",
         keepalive: true,
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ UUID, id })
+        body: JSON.stringify({ UUID, pageid }),
+        signal: abortcontroller.signal
     });
     const data = await res.json();
 
-    console.log(data);
+    // error handling
+    if (res.status !== 200) {
+        if (UUID && data.invalid_uuid === true) {
+            // if the server responds with invalid_uuid, but an UUID is already set, the server
+            // probably was restarted or crashed, therefore reload the page to reset the local state
+            location.reload();
+        }
+        if (data.error) console.log(data.error);
+        throw new Error; // error instead of simple return to trigger timeout
+    }
 
-    // parse data
+    // UUID (sent on first ever request)
+    if (data.UUID) {
+        UUID = data.UUID;
+        localStorage.setItem("UUID", UUID);
+    }
+
+    // apply updated state
     iframe.style.borderColor = data.color;
+    iframe.style.display = "inline"; // unhide the stream (only required once aber egal)
 }
+
+async function updateLoop() {
+    // called on load of stream iframe
+    try { await updateState(); }
+    catch { await new Promise(r => setTimeout(r, 1000)); } // wait before retrying
+    updateLoop();
+}
+
+onbeforeunload = abortcontroller.abort;
 

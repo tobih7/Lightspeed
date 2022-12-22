@@ -33,4 +33,4 @@ app.get("/:id", (req, res) => {
 
 setInterval(pollExternalAPI, POLLING_INTERVAL);
 
-app.listen(8090); // ?callback
+app.listen(8090);

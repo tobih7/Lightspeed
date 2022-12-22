@@ -1,5 +1,7 @@
 // Lightspeed/main/state.ts
 
+import { Socket } from "net";
+
 // =====  Configuration  ===== \\
 export const PAGES = 3; // number of different pages accessible via /$pageid
 
@@ -19,39 +21,83 @@ export class Page {
         this.pageid = pageid;
     }
     get clients() {
-        for (let c of State.clients) if (c.connected_to === this.pageid) return c;
+        return Array.from(State.clients).filter(c => c.connected_to === this.pageid);
+    }
+    toJSON() {
+        return {
+            pageid: this.pageid,
+            color: this.color,
+            clients: this.clients.map(c => c.uuid)
+        };
     }
 }
 
 export class Client {
     readonly uuid: UUID;
-    connected_to: number | null;
-    last_event: Date;
+    #sockets: Set<Socket> = new Set();
+    #connected_to: number | null;
+    #last_event: Date;
 
     constructor(uuid: UUID) {
         this.uuid = uuid;
     }
 
-    connected(pageid: number) {
+    connected(pageid: number, socket: Socket) {
         // called when a client connects
-        this.connected_to = pageid;
-        this.last_event = new Date();
+        if (!this.#sockets.has(socket)) {
+            // client connected from new socket
+            socket.addListener("close", () => {
+                this.#sockets.delete(socket);
+                if (this.#sockets.size === 0) this.disconnected();
+            });
+            this.#sockets.add(socket);
+        }
+        this.#connected_to = pageid;
+        this.#last_event = new Date();
     }
     disconnected() {
         // called when a client disconnects
-        this.connected_to = null;
-        this.last_event = new Date();
+        this.#connected_to = null;
+        this.#last_event = new Date();
+    }
+
+    get sockets() {
+        return this.#sockets;
+    }
+    get address() {
+        // let adr = this.#sockets..remoteAddress; // TODO
+        // return adr.includes(":") ? `[${adr}]` : adr;
+        return Array.from(new Set(Array.from(this.#sockets).map(s => s.remoteAddress))).join(", ");;
+    }
+    get connected_to() {
+        return this.#connected_to;
+    }
+    get last_event() {
+        return this.#last_event;
+    }
+
+    toJSON() {
+        return {
+            sockets: this.sockets.size,
+            ...Object.fromEntries(["uuid", "address", "connected_to", "last_event"].map(x => [x, this[x as keyof Client]])),
+        };
     }
 }
 
 class Clients extends Set<Client> {
-    byUUID(uuid: UUID): Client | undefined {
-        return [...this].find(c => c.uuid === uuid);
+    override add(c: Client): this {
+        if (this.byUUID(c.uuid)) throw new Error("Attempted to add Client with UUID of existing Client!");
+        super.add(c);
+        return this;
     }
+    byUUID(uuid: UUID): Client | null {
+        return [...this].find(c => c.uuid === uuid) ?? null;
+    }
+    toJSON() { return [...this]; }
 }
 
 // =====  State Object  ===== \\
-const State = new (class {
+const State = new class {
     readonly pages: readonly Page[] = Array.from({ length: PAGES }, (_, i) => new Page(++i));
     readonly clients: Clients = new Clients();
 
@@ -79,7 +125,7 @@ const State = new (class {
     get wait() {
         return this.#promise;
     }
-})();
+};
 
 // =====  HELPERS  ===== \\
 export function isValidPageID(id: number): Page | null {
